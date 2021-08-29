@@ -1,5 +1,5 @@
 node_modules
-.rsw*
+.rsw/
 .DS_Store
 dist
 dist-ssr
