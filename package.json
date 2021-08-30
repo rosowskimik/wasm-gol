@@ -4,7 +4,7 @@
   "version": "1.0.0",
   "scripts": {
     "dev": "vite",
-    "build": "tsc && vite build --base=/wasm-gol/",
+    "build": "tsc && vite build",
     "rsw:build": "rsw && npm run build",
     "serve": "vite preview"
   },
