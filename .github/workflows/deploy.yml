@@ -15,23 +15,26 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - name: Setup Rust
-        uses: actions-rs/toolchain@v1
+      - name: Setup Wasm-pack
+        run: curl https://rustwasm.github.io/wasm-pack/installer/init.sh -sSf | sh
+        
+      - name: Cache rust
+      - uses: actions/cache@v2
         with:
-          profile: minimal
-          toolchain: nightly
-          target: wasm32-unknown-unknown
-          default: true
-
-      - name: Setup wasm-pack
-        uses: jetli/wasm-pack-action@v0.3.0
+          path: |
+            ~/.cargo/bin/
+            ~/.cargo/registry/index/
+            ~/.cargo/registry/cache/
+            ~/.cargo/git/db/
+            gol-backend/target/
+          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
 
       - name: Setup Node
         uses: actions/setup-node@v2
         with:
           node-version: "14"
 
-      - name: Cache node dependencies
+      - name: Cache node
         uses: actions/cache@v2
         with:
           path: ~/.npm
