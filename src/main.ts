@@ -1,5 +1,6 @@
-import "./styles/main.scss";
-import init, { Universe, Cell } from "gol-backend";
+import "./styles/main.css";
+
+import init, { Cell, Universe } from "gol-backend";
 
 const CELL_SIZE = 10;
 const GRID_COLOR = "#cccccc";
@@ -7,19 +8,33 @@ const DEAD_COLOR = "#ffffff";
 const ALIVE_COLOR = "#000000";
 
 async function main() {
+  // Initialize WASM module (also grab wasm.memory)
   const { memory } = await init();
 
-  const universe = new Universe(146, 75);
-  const width = universe.width;
-  const height = universe.height;
-
+  // Grab DOM elements
+  const togglePlayBtn = document.querySelector<HTMLButtonElement>("#toggle")!;
+  const stepBtn = document.querySelector<HTMLButtonElement>("#step")!;
+  // const clearBtn = document.querySelector<HTMLButtonElement>('#clear')!;
+  // const randomBtn = document.querySelector<HTMLButtonElement>('#random')!;
+  // const setBtn = document.querySelector<HTMLButtonElement>('#set')!;
+  const widthInput = document.querySelector<HTMLInputElement>("#width")!;
+  const heightInput = document.querySelector<HTMLInputElement>("#height")!;
   const canvas = document.querySelector<HTMLCanvasElement>("#gol-canvas")!;
+  const ctx = canvas.getContext("2d")!;
+
+  // Set canvas / grid width & height
+  const width = parseInt(widthInput.value);
+  const height = parseInt(heightInput.value);
   canvas.width = (CELL_SIZE + 1) * width + 1;
   canvas.height = (CELL_SIZE + 1) * height + 1;
 
-  const ctx = canvas.getContext("2d")!;
+  // Create universe
+  const universe = new Universe(width, height);
+  let running = false;
 
   const drawGrid = () => {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
     ctx.beginPath();
     ctx.strokeStyle = GRID_COLOR;
 
@@ -57,14 +72,39 @@ async function main() {
     }
   };
 
-  const render = () => {
+  // Draw next frame
+  const nextFrame = () => {
     universe.tick();
     drawCells();
-    requestAnimationFrame(render);
+
+    // Queue next frame if not paused
+    if (running) {
+      requestAnimationFrame(nextFrame);
+    }
   };
 
+  // Setup event handlers
+  togglePlayBtn.addEventListener("click", (e) => {
+    e.preventDefault();
+
+    running = !running;
+    togglePlayBtn.innerHTML = running ? "Pause" : "Play";
+
+    if (running) {
+      requestAnimationFrame(nextFrame);
+    }
+  });
+  stepBtn.addEventListener("click", (e) => {
+    e.preventDefault();
+
+    running = false;
+    togglePlayBtn.innerHTML = "Play";
+
+    requestAnimationFrame(nextFrame);
+  });
+
+  // Initial draw of the grid
   drawGrid();
-  render();
 }
 
 main();
