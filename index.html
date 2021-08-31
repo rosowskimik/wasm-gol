@@ -1,31 +1,39 @@
 <!DOCTYPE html>
 <html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Wasm Game-Of-Life</title>
+  </head>
 
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <!-- <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet"> -->
-  <!-- <link rel="icon" href="/favicon.svg" type="image/x-icon"></link> -->
-  <title>Wasm Game-Of-Life</title>
-</head>
-
-<body>
-  <div class="controls-game">
-    <button id="toggle" class="btn btn-controls">Play</button>
-    <button id="step" class="btn btn-controls">Step</button>
-    <button id="clear" class="btn btn-controls">Clear</button>
-    <button id="random" class="btn btn-controls">Randomize</button>
-  </div>
-  <div class="controls-size">
-    <input type="number" name="width" value="64" min="1" id="width" class="input-size">
-    <span id="x">x</span>
-    <input type="number" name="height" value="64" min="1" id="height" class="input-size">
-    <button id="resize" class="btn btn-size">Set</button>
-  </div>
-  <canvas id="gol-canvas"></canvas>
-  <script type="module" src="/src/main.ts"></script>
-</body>
-
+  <body>
+    <div class="controls-game">
+      <button id="toggle" class="btn btn-controls">Play</button>
+      <button id="step" class="btn btn-controls">Step</button>
+      <button id="clear" class="btn btn-controls">Clear</button>
+      <button id="random" class="btn btn-controls">Randomize</button>
+    </div>
+    <div class="controls-size">
+      <input
+        type="number"
+        name="width"
+        value="64"
+        min="1"
+        id="width"
+        class="input-size"
+      />
+      <span id="x">x</span>
+      <input
+        type="number"
+        name="height"
+        value="64"
+        min="1"
+        id="height"
+        class="input-size"
+      />
+      <button id="resize" class="btn btn-size">Set</button>
+    </div>
+    <canvas id="gol-canvas"></canvas>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
 </html>

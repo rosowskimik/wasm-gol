@@ -1,111 +1,110 @@
-import './styles/main.css';
+import "./styles/main.css";
 
-import init, { Cell, Universe } from 'gol-backend';
+import init, { Cell, Universe } from "gol-backend";
 
 const CELL_SIZE = 10;
-const GRID_COLOR = '#cccccc';
-const DEAD_COLOR = '#ffffff';
-const ALIVE_COLOR = '#000000';
+const GRID_COLOR = "#cccccc";
+const DEAD_COLOR = "#ffffff";
+const ALIVE_COLOR = "#000000";
 
 async function main() {
-    // Initialize WASM module (also grab wasm.memory)
-    const { memory } = await init();
+  // Initialize WASM module (also grab wasm.memory)
+  const { memory } = await init();
 
-    // Grab DOM elements
-    const togglePlayBtn = document.querySelector<HTMLButtonElement>('#toggle')!;
-    const stepBtn = document.querySelector<HTMLButtonElement>('#step')!;
-    // const clearBtn = document.querySelector<HTMLButtonElement>('#clear')!;
-    // const randomBtn = document.querySelector<HTMLButtonElement>('#random')!;
-    // const setBtn = document.querySelector<HTMLButtonElement>('#set')!;
-    const widthInput = document.querySelector<HTMLInputElement>('#width')!;
-    const heightInput = document.querySelector<HTMLInputElement>('#height')!;
-    const canvas = document.querySelector<HTMLCanvasElement>('#gol-canvas')!;
-    const ctx = canvas.getContext('2d')!;
+  // Grab DOM elements
+  const togglePlayBtn = document.querySelector<HTMLButtonElement>("#toggle")!;
+  const stepBtn = document.querySelector<HTMLButtonElement>("#step")!;
+  // const clearBtn = document.querySelector<HTMLButtonElement>('#clear')!;
+  // const randomBtn = document.querySelector<HTMLButtonElement>('#random')!;
+  // const setBtn = document.querySelector<HTMLButtonElement>('#set')!;
+  const widthInput = document.querySelector<HTMLInputElement>("#width")!;
+  const heightInput = document.querySelector<HTMLInputElement>("#height")!;
+  const canvas = document.querySelector<HTMLCanvasElement>("#gol-canvas")!;
+  const ctx = canvas.getContext("2d")!;
 
-    // Set canvas / grid width & height
-    const width = parseInt(widthInput.value);
-    const height = parseInt(heightInput.value);
-    canvas.width = (CELL_SIZE + 1) * width + 1;
-    canvas.height = (CELL_SIZE + 1) * height + 1;
+  // Set canvas / grid width & height
+  const width = parseInt(widthInput.value);
+  const height = parseInt(heightInput.value);
+  canvas.width = (CELL_SIZE + 1) * width + 1;
+  canvas.height = (CELL_SIZE + 1) * height + 1;
 
-    // Create universe
-    const universe = new Universe(width, height);
-    let running = false;
+  // Create universe
+  const universe = new Universe(width, height);
+  let running = false;
 
-    const drawGrid = () => {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
+  const drawGrid = () => {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-        ctx.beginPath();
-        ctx.strokeStyle = GRID_COLOR;
+    ctx.beginPath();
+    ctx.strokeStyle = GRID_COLOR;
 
-        for (let i = 0; i <= width; i++) {
-            ctx.moveTo(i * (CELL_SIZE + 1) + 1, 0);
-            ctx.lineTo(i * (CELL_SIZE + 1) + 1, (CELL_SIZE + 1) * height + 1);
-        }
+    for (let i = 0; i <= width; i++) {
+      ctx.moveTo(i * (CELL_SIZE + 1) + 1, 0);
+      ctx.lineTo(i * (CELL_SIZE + 1) + 1, (CELL_SIZE + 1) * height + 1);
+    }
 
-        for (let j = 0; j <= height; j++) {
-            ctx.moveTo(0, j * (CELL_SIZE + 1) + 1);
-            ctx.lineTo((CELL_SIZE + 1) * width + 1, j * (CELL_SIZE + 1) + 1);
-        }
+    for (let j = 0; j <= height; j++) {
+      ctx.moveTo(0, j * (CELL_SIZE + 1) + 1);
+      ctx.lineTo((CELL_SIZE + 1) * width + 1, j * (CELL_SIZE + 1) + 1);
+    }
 
-        ctx.stroke();
-    };
+    ctx.stroke();
+  };
 
-    const drawCells = () => {
-        const cellsPtr = universe.cells();
-        const cells = new Uint8Array(memory.buffer, cellsPtr, width * height);
+  const drawCells = () => {
+    const cellsPtr = universe.cells();
+    const cells = new Uint8Array(memory.buffer, cellsPtr, width * height);
 
-        ctx.beginPath();
-        for (let row = 0; row < height; row++) {
-            for (let col = 0; col < width; col++) {
-                const idx = universe.getIndex(col, row);
+    ctx.beginPath();
+    for (let row = 0; row < height; row++) {
+      for (let col = 0; col < width; col++) {
+        const idx = universe.getIndex(col, row);
 
-                ctx.fillStyle =
-                    cells[idx] === Cell.Dead ? DEAD_COLOR : ALIVE_COLOR;
+        ctx.fillStyle = cells[idx] === Cell.Dead ? DEAD_COLOR : ALIVE_COLOR;
 
-                ctx.fillRect(
-                    col * (CELL_SIZE + 1) + 1,
-                    row * (CELL_SIZE + 1) + 1,
-                    CELL_SIZE,
-                    CELL_SIZE
-                );
-            }
-        }
-    };
+        ctx.fillRect(
+          col * (CELL_SIZE + 1) + 1,
+          row * (CELL_SIZE + 1) + 1,
+          CELL_SIZE,
+          CELL_SIZE
+        );
+      }
+    }
+  };
 
-    // Draw next frame
-    const nextFrame = () => {
-        universe.tick();
-        drawCells();
+  // Draw next frame
+  const nextFrame = () => {
+    universe.tick();
+    drawCells();
 
-        // Queue next frame if not paused
-        if (running) {
-            requestAnimationFrame(nextFrame);
-        }
-    };
+    // Queue next frame if not paused
+    if (running) {
+      requestAnimationFrame(nextFrame);
+    }
+  };
 
-    // Setup event handlers
-    togglePlayBtn.addEventListener('click', (e) => {
-        e.preventDefault();
+  // Setup event handlers
+  togglePlayBtn.addEventListener("click", (e) => {
+    e.preventDefault();
 
-        running = !running;
-        togglePlayBtn.innerHTML = running ? 'Pause' : 'Play';
+    running = !running;
+    togglePlayBtn.innerHTML = running ? "Pause" : "Play";
 
-        if (running) {
-            requestAnimationFrame(nextFrame);
-        }
-    });
-    stepBtn.addEventListener('click', (e) => {
-        e.preventDefault();
+    if (running) {
+      requestAnimationFrame(nextFrame);
+    }
+  });
+  stepBtn.addEventListener("click", (e) => {
+    e.preventDefault();
 
-        running = false;
-        togglePlayBtn.innerHTML = 'Play';
+    running = false;
+    togglePlayBtn.innerHTML = "Play";
 
-        requestAnimationFrame(nextFrame);
-    });
+    requestAnimationFrame(nextFrame);
+  });
 
-    // Initial draw of the grid
-    drawGrid();
+  // Initial draw of the grid
+  drawGrid();
 }
 
 main();
