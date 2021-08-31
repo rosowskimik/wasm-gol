@@ -3,11 +3,38 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Vite Wasm-Pack App</title>
-    <script type="module" crossorigin src="/wasm-gol/assets/index.fe8b3dc5.js"></script>
-    <link rel="stylesheet" href="/wasm-gol/assets/index.2f0b6c13.css">
+    <title>Wasm Game-Of-Life</title>
+    <script type="module" crossorigin src="/wasm-gol/assets/index.1cf3b7a2.js"></script>
+    <link rel="stylesheet" href="/wasm-gol/assets/index.6312a372.css">
   </head>
+
   <body>
+    <div class="controls-game">
+      <button id="toggle" class="btn btn-controls">Play</button>
+      <button id="step" class="btn btn-controls">Step</button>
+      <button id="clear" class="btn btn-controls">Clear</button>
+      <button id="random" class="btn btn-controls">Randomize</button>
+    </div>
+    <div class="controls-size">
+      <input
+        type="number"
+        name="width"
+        value="64"
+        min="1"
+        id="width"
+        class="input-size"
+      />
+      <span id="x">x</span>
+      <input
+        type="number"
+        name="height"
+        value="64"
+        min="1"
+        id="height"
+        class="input-size"
+      />
+      <button id="resize" class="btn btn-size">Set</button>
+    </div>
     <canvas id="gol-canvas"></canvas>
     
   </body>
