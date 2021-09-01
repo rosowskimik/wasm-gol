@@ -4,6 +4,7 @@ import init, { Cell, Universe } from "gol-backend";
 
 const CELL_SIZE = 10;
 const GRID_COLOR = "#cccccc";
+// const GRID_COLOR = "#000000";
 const DEAD_COLOR = "#ffffff";
 const ALIVE_COLOR = "#000000";
 
@@ -15,7 +16,7 @@ async function main() {
   const togglePlayBtn = document.querySelector<HTMLButtonElement>("#toggle")!;
   const stepBtn = document.querySelector<HTMLButtonElement>("#step")!;
   // const clearBtn = document.querySelector<HTMLButtonElement>('#clear')!;
-  // const randomBtn = document.querySelector<HTMLButtonElement>('#random')!;
+  const randomBtn = document.querySelector<HTMLButtonElement>("#random")!;
   // const setBtn = document.querySelector<HTMLButtonElement>('#set')!;
   const widthInput = document.querySelector<HTMLInputElement>("#width")!;
   const heightInput = document.querySelector<HTMLInputElement>("#height")!;
@@ -77,18 +78,22 @@ async function main() {
     universe.tick();
     drawCells();
 
-    // Queue next frame if not paused
     if (running) {
+      // Queue next frame if not paused
       requestAnimationFrame(nextFrame);
     }
+  };
+
+  const setPlayState = (newState: boolean) => {
+    running = newState;
+    togglePlayBtn.innerHTML = running ? "Pause" : "Play";
   };
 
   // Setup event handlers
   togglePlayBtn.addEventListener("click", (e) => {
     e.preventDefault();
 
-    running = !running;
-    togglePlayBtn.innerHTML = running ? "Pause" : "Play";
+    setPlayState(!running);
 
     if (running) {
       requestAnimationFrame(nextFrame);
@@ -97,10 +102,15 @@ async function main() {
   stepBtn.addEventListener("click", (e) => {
     e.preventDefault();
 
-    running = false;
-    togglePlayBtn.innerHTML = "Play";
+    setPlayState(false);
 
     requestAnimationFrame(nextFrame);
+  });
+  randomBtn.addEventListener("click", (e) => {
+    e.preventDefault();
+
+    universe.fillRandom();
+    drawCells();
   });
 
   // Initial draw of the grid

@@ -24,10 +24,10 @@ pub enum Cell {
 
 #[wasm_bindgen]
 pub struct Universe {
-    #[wasm_bindgen(readonly)]
-    pub width: u32,
-    #[wasm_bindgen(readonly)]
-    pub height: u32,
+    // #[wasm_bindgen(readonly)]
+    width: u32,
+    // #[wasm_bindgen(readonly)]
+    height: u32,
     cells: Vec<Cell>,
 }
 
@@ -53,21 +53,22 @@ impl Universe {
 
     #[wasm_bindgen(constructor)]
     pub fn new(width: u32, height: u32) -> Self {
-        let cells = (0..width * height)
-            .map(|i| {
-                if i % 2 == 0 || i % 7 == 0 {
-                    Cell::Alive
-                } else {
-                    Cell::Dead
-                }
-            })
-            .collect();
-
         Self {
             width,
             height,
-            cells,
+            cells: vec![Cell::Dead; (width * height) as usize],
         }
+    }
+
+    #[wasm_bindgen(js_name = fillRandom)]
+    pub fn fill_random(&mut self) {
+        self.cells.iter_mut().for_each(|cell| {
+            *cell = if js_sys::Math::random() < 0.5 {
+                Cell::Dead
+            } else {
+                Cell::Alive
+            };
+        });
     }
 
     pub fn tick(&mut self) {
