@@ -15,7 +15,7 @@ async function main() {
   // Grab DOM elements
   const togglePlayBtn = document.querySelector<HTMLButtonElement>("#toggle")!;
   const stepBtn = document.querySelector<HTMLButtonElement>("#step")!;
-  // const clearBtn = document.querySelector<HTMLButtonElement>('#clear')!;
+  const resetBtn = document.querySelector<HTMLButtonElement>("#reset")!;
   const randomBtn = document.querySelector<HTMLButtonElement>("#random")!;
   // const setBtn = document.querySelector<HTMLButtonElement>('#set')!;
   const widthInput = document.querySelector<HTMLInputElement>("#width")!;
@@ -31,7 +31,6 @@ async function main() {
 
   // Create universe
   const universe = new Universe(width, height);
-  let running = false;
 
   const drawGrid = () => {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -73,44 +72,83 @@ async function main() {
     }
   };
 
+  let animationId: number | null = null;
   // Draw next frame
-  const nextFrame = () => {
-    universe.tick();
+  const step = () => {
     drawCells();
-
-    if (running) {
-      // Queue next frame if not paused
-      requestAnimationFrame(nextFrame);
-    }
+    universe.tick();
   };
 
-  const setPlayState = (newState: boolean) => {
-    running = newState;
-    togglePlayBtn.innerHTML = running ? "Pause" : "Play";
+  const renderLoop = () => {
+    step();
+    animationId = requestAnimationFrame(renderLoop);
+  };
+
+  //   const nextFrame = () => {
+  //     universe.tick();
+  //     drawCells();
+
+  //     if (running) {
+  //       // Queue next frame if not paused
+  //       requestAnimationFrame(nextFrame);
+  //     }
+  //   };
+
+  // const setPlayState = (newState: boolean) => {
+  //   running = newState;
+  //   togglePlayBtn.innerHTML = running ? "Pause" : "Play";
+  // };
+  //
+  //
+  const play = () => {
+    togglePlayBtn.textContent = "Pause";
+    animationId = requestAnimationFrame(renderLoop);
+  };
+  const pause = () => {
+    if (animationId) {
+      cancelAnimationFrame(animationId);
+      animationId = null;
+    }
+    togglePlayBtn.textContent = "Play";
   };
 
   // Setup event handlers
   togglePlayBtn.addEventListener("click", (e) => {
     e.preventDefault();
 
-    setPlayState(!running);
-
-    if (running) {
-      requestAnimationFrame(nextFrame);
+    if (animationId) {
+      pause();
+    } else {
+      play();
     }
   });
+
   stepBtn.addEventListener("click", (e) => {
     e.preventDefault();
 
-    setPlayState(false);
+    pause();
 
-    requestAnimationFrame(nextFrame);
+    requestAnimationFrame(step);
   });
+
+  resetBtn.addEventListener("click", (e) => {
+    e.preventDefault();
+
+    pause();
+    universe.reset();
+
+    if (animationId === null) {
+      requestAnimationFrame(step);
+    }
+  });
+
   randomBtn.addEventListener("click", (e) => {
     e.preventDefault();
 
     universe.fillRandom();
-    drawCells();
+    if (animationId === null) {
+      requestAnimationFrame(step);
+    }
   });
 
   // Initial draw of the grid

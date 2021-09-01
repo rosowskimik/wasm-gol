@@ -71,6 +71,10 @@ impl Universe {
         });
     }
 
+    pub fn reset(&mut self) {
+        self.cells.fill(Cell::Dead);
+    }
+
     pub fn tick(&mut self) {
         let mut next = self.cells.clone();
 
