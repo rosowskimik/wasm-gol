@@ -106,4 +106,8 @@ body {
 canvas {
   background: #fff;
   border-radius: 5px;
+  position: relative;
+  overflow-y: scroll;
+  /* max-height: 80vh; */
+  /* max-width: 95vw; */
 }

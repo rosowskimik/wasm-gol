@@ -74,8 +74,8 @@ async function main() {
   let animationId: number | null = null;
   // Draw next frame
   const step = () => {
-    drawCells();
     universe.tick();
+    drawCells();
   };
 
   const renderLoop = () => {
@@ -122,7 +122,7 @@ async function main() {
     universe.reset();
 
     if (animationId === null) {
-      requestAnimationFrame(step);
+      requestAnimationFrame(drawCells);
     }
   });
 
@@ -131,7 +131,7 @@ async function main() {
 
     universe.fillRandom();
     if (animationId === null) {
-      requestAnimationFrame(step);
+      requestAnimationFrame(drawCells);
     }
   });
 
@@ -148,6 +148,25 @@ async function main() {
     universe.resize(width, height);
 
     drawGrid();
+  });
+
+  canvas.addEventListener("click", (e) => {
+    e.preventDefault();
+
+    const boundingRect = canvas.getBoundingClientRect();
+
+    const scaleX = canvas.width / boundingRect.width;
+    const scaleY = canvas.height / boundingRect.height;
+
+    const canvasLeft = (e.clientX - boundingRect.left) * scaleX;
+    const canvasTop = (e.clientY - boundingRect.top) * scaleY;
+
+    const col = Math.min(Math.floor(canvasLeft / (CELL_SIZE + 1)), width - 1);
+    const row = Math.min(Math.floor(canvasTop / (CELL_SIZE + 1)), height - 1);
+
+    universe.toggleCell(col, row);
+
+    requestAnimationFrame(drawCells);
   });
 
   // Initial draw of the grid
