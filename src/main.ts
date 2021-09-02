@@ -17,15 +17,14 @@ async function main() {
   const stepBtn = document.querySelector<HTMLButtonElement>("#step")!;
   const resetBtn = document.querySelector<HTMLButtonElement>("#reset")!;
   const randomBtn = document.querySelector<HTMLButtonElement>("#random")!;
-  // const setBtn = document.querySelector<HTMLButtonElement>('#set')!;
+  const resizeBtn = document.querySelector<HTMLButtonElement>("#resize")!;
   const widthInput = document.querySelector<HTMLInputElement>("#width")!;
   const heightInput = document.querySelector<HTMLInputElement>("#height")!;
   const canvas = document.querySelector<HTMLCanvasElement>("#gol-canvas")!;
   const ctx = canvas.getContext("2d")!;
 
-  // Set canvas / grid width & height
-  const width = parseInt(widthInput.value);
-  const height = parseInt(heightInput.value);
+  let width = widthInput.valueAsNumber;
+  let height = heightInput.valueAsNumber;
   canvas.width = (CELL_SIZE + 1) * width + 1;
   canvas.height = (CELL_SIZE + 1) * height + 1;
 
@@ -84,26 +83,11 @@ async function main() {
     animationId = requestAnimationFrame(renderLoop);
   };
 
-  //   const nextFrame = () => {
-  //     universe.tick();
-  //     drawCells();
-
-  //     if (running) {
-  //       // Queue next frame if not paused
-  //       requestAnimationFrame(nextFrame);
-  //     }
-  //   };
-
-  // const setPlayState = (newState: boolean) => {
-  //   running = newState;
-  //   togglePlayBtn.innerHTML = running ? "Pause" : "Play";
-  // };
-  //
-  //
   const play = () => {
     togglePlayBtn.textContent = "Pause";
     animationId = requestAnimationFrame(renderLoop);
   };
+
   const pause = () => {
     if (animationId) {
       cancelAnimationFrame(animationId);
@@ -149,6 +133,21 @@ async function main() {
     if (animationId === null) {
       requestAnimationFrame(step);
     }
+  });
+
+  resizeBtn.addEventListener("click", (e) => {
+    e.preventDefault();
+
+    pause();
+
+    width = widthInput.valueAsNumber;
+    height = heightInput.valueAsNumber;
+
+    canvas.width = (CELL_SIZE + 1) * width + 1;
+    canvas.height = (CELL_SIZE + 1) * height + 1;
+    universe.resize(width, height);
+
+    drawGrid();
   });
 
   // Initial draw of the grid

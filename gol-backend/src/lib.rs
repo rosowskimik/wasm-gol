@@ -60,6 +60,12 @@ impl Universe {
         }
     }
 
+    pub fn resize(&mut self, width: u32, height: u32) {
+        self.width = width;
+        self.height = height;
+        self.cells = vec![Cell::Dead; (width * height) as usize];
+    }
+
     #[wasm_bindgen(js_name = fillRandom)]
     pub fn fill_random(&mut self) {
         self.cells.iter_mut().for_each(|cell| {
