@@ -17,7 +17,7 @@ jobs:
 
       - name: Setup Wasm-pack
         run: curl https://rustwasm.github.io/wasm-pack/installer/init.sh -sSf | sh
-        
+
       - name: Cache rust
         uses: actions/cache@v2
         with:
@@ -42,7 +42,6 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-node-
 
-      - run: cd gol-backend && wasm-pack build --release
       - run: npm ci
       - run: npm run rsw:build
 
