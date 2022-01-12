@@ -8,9 +8,6 @@
     "rsw:build": "rsw && npm run build",
     "serve": "vite preview"
   },
-  "dependencies": {
-    "gol-backend": "file:.rsw/crates/gol-backend/pkg"
-  },
   "devDependencies": {
     "typescript": "^4.3.2",
     "vite": "^2.5.1",
