@@ -84,7 +84,7 @@ impl Universe {
     #[wasm_bindgen(js_name = fillRandom)]
     pub fn fill_random(&mut self) {
         self.cells.iter_mut().for_each(|cell| {
-            *cell = if js_sys::Math::random() < 0.5 {
+            *cell = if js_sys::Math::random() < 0.75 {
                 Cell::Dead
             } else {
                 Cell::Alive

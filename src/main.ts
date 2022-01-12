@@ -3,10 +3,8 @@ import "./styles/main.css";
 import init, { Cell, Universe } from "gol-backend";
 
 const CELL_SIZE = 10;
-const GRID_COLOR = "#cccccc";
-// const GRID_COLOR = "#000000";
-const DEAD_COLOR = "#ffffff";
-const ALIVE_COLOR = "#000000";
+const DEAD_COLOR = "#000";
+const ALIVE_COLOR = "#fff";
 
 async function main() {
   // Initialize WASM module (also grab wasm.memory)
@@ -30,25 +28,6 @@ async function main() {
 
   // Create universe
   const universe = new Universe(width, height);
-
-  const drawGrid = () => {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-    ctx.beginPath();
-    ctx.strokeStyle = GRID_COLOR;
-
-    for (let i = 0; i <= width; i++) {
-      ctx.moveTo(i * (CELL_SIZE + 1) + 0.5, 0);
-      ctx.lineTo(i * (CELL_SIZE + 1) + 0.5, (CELL_SIZE + 1) * height + 1);
-    }
-
-    for (let j = 0; j <= height; j++) {
-      ctx.moveTo(0, j * (CELL_SIZE + 1) + 0.5);
-      ctx.lineTo((CELL_SIZE + 1) * width + 1, j * (CELL_SIZE + 1) + 0.5);
-    }
-
-    ctx.stroke();
-  };
 
   const drawCells = () => {
     const cellsPtr = universe.cells();
@@ -147,7 +126,7 @@ async function main() {
     canvas.height = (CELL_SIZE + 1) * height + 1;
     universe.resize(width, height);
 
-    drawGrid();
+    drawCells();
   });
 
   canvas.addEventListener("click", (e) => {
@@ -169,8 +148,8 @@ async function main() {
     requestAnimationFrame(drawCells);
   });
 
-  // Initial draw of the grid
-  drawGrid();
+  // Initial draw
+  drawCells();
 }
 
 main();

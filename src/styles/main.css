@@ -32,16 +32,20 @@ body {
 
 .controls-game {
   margin-top: 1em;
+  width: 30vw;
   display: flex;
   flex-direction: row;
-  width: 40vw;
   justify-content: center;
   align-items: center;
 }
 
 .controls-size {
   display: flex;
-  padding: 1em;
+  justify-content: center;
+  align-items: center;
+  flex-direction: row;
+  width: 30vw;
+  padding: 1em 0 1em 1em;
 }
 
 #x {
@@ -81,6 +85,7 @@ body {
   margin: 0 1em;
   padding: 0.2em 0.7em;
   font-size: 1em;
+  flex: auto;
   color: var(--main-fg);
   background: var(--main-bg);
   border: var(--main-border);
@@ -94,17 +99,17 @@ body {
   background: var(--main-bg-hl);
   border-color: var(--main-fg-hl);
 }
-
+/* 
 .btn-controls {
   flex-grow: 1;
-}
+} */
 
 .btn-size {
   width: 5em;
 }
 
 canvas {
-  background: #fff;
+  background: #222;
   border-radius: 5px;
   position: relative;
   overflow-y: scroll;
