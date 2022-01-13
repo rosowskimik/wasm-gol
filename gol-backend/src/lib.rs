@@ -1,10 +1,13 @@
+use std::mem;
+
 use wasm_bindgen::prelude::*;
+use wee_alloc::WeeAlloc;
 
 // When the `wee_alloc` feature is enabled, use `wee_alloc` as the global
 // allocator.
 #[cfg(feature = "wee_alloc")]
 #[global_allocator]
-static ALLOC: wee_alloc::WeeAlloc = wee_alloc::WeeAlloc::INIT;
+static ALLOC: WeeAlloc = WeeAlloc::INIT;
 
 // Set console.error panic hook in debug mode
 #[cfg(feature = "console_error_panic_hook")]
@@ -38,6 +41,7 @@ pub struct Universe {
     // #[wasm_bindgen(readonly)]
     height: u32,
     cells: Vec<Cell>,
+    backing_cells: Vec<Cell>,
 }
 
 #[wasm_bindgen]
@@ -62,17 +66,22 @@ impl Universe {
 
     #[wasm_bindgen(constructor)]
     pub fn new(width: u32, height: u32) -> Self {
+        let cells_length = (width * height) as usize;
         Self {
             width,
             height,
-            cells: vec![Cell::Dead; (width * height) as usize],
+            cells: vec![Cell::Dead; cells_length],
+            backing_cells: vec![Cell::Dead; cells_length],
         }
     }
 
     pub fn resize(&mut self, width: u32, height: u32) {
         self.width = width;
         self.height = height;
-        self.cells = vec![Cell::Dead; (width * height) as usize];
+
+        let cells_length = (width * height) as usize;
+        self.cells = vec![Cell::Dead; cells_length];
+        self.backing_cells.resize(cells_length, Cell::Dead);
     }
 
     #[wasm_bindgen(js_name = toggleCell)]
@@ -97,8 +106,6 @@ impl Universe {
     }
 
     pub fn tick(&mut self) {
-        let mut next = self.cells.clone();
-
         (0..self.height).into_iter().for_each(|row| {
             (0..self.width).into_iter().for_each(|column| {
                 let idx = self.get_index(column, row);
@@ -106,18 +113,18 @@ impl Universe {
                 let live_neighbours = self.live_neighbour_count(column, row);
 
                 let next_cell = match (cell, live_neighbours) {
-                    (Cell::Alive, x) if x < 2 => Cell::Dead,
                     (Cell::Alive, 2) | (Cell::Alive, 3) => Cell::Alive,
+                    (Cell::Alive, x) if x < 2 => Cell::Dead,
                     (Cell::Alive, x) if x > 3 => Cell::Dead,
                     (Cell::Dead, 3) => Cell::Alive,
                     (other, _) => other,
                 };
 
-                next[idx] = next_cell;
+                self.backing_cells[idx] = next_cell;
             });
         });
 
-        self.cells = next;
+        mem::swap(&mut self.cells, &mut self.backing_cells);
     }
 
     #[wasm_bindgen(js_name = getIndex)]
