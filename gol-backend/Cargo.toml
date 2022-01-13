@@ -1,9 +1,9 @@
 [package]
 name = "gol-backend"
 license = "MIT"
-version = "1.0.0"
+version = "1.1.0"
 authors = ["Mikołaj Rosowski <m.rosowski1@wp.pl>"]
-edition = "2018"
+edition = "2021"
 
 [lib]
 crate-type = ["cdylib", "rlib"]
